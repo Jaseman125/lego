@@ -19,6 +19,18 @@
         margin-bottom: 20px;
     }
 
+    /* Container that enforces 1800×900 max size */
+    #gridContainer {
+        max-width: 1800px;
+        max-height: 900px;
+        margin: 0 auto;
+        overflow: auto;
+        padding: 10px;
+        box-sizing: border-box;
+        background: #0003;
+        border-radius: 8px;
+    }
+
     /* 10×10 grid */
     .grid {
         display: grid;
@@ -43,7 +55,9 @@
 
 <h1>100 LEGO Pics</h1>
 
-<div class="grid" id="picGrid"></div>
+<div id="gridContainer">
+    <div class="grid" id="picGrid"></div>
+</div>
 
 <script>
 const apiURL = "https://api.github.com/repos/Jaseman125/lego/contents/100-lego-pics";
