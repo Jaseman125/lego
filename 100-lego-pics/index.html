@@ -19,34 +19,38 @@
         margin-bottom: 20px;
     }
 
-    /* Container that enforces 1800×900 max size */
+    /* Outer container with hard limits */
     #gridContainer {
+        width: 100%;
         max-width: 1800px;
+        height: 100%;
         max-height: 900px;
         margin: 0 auto;
-        overflow: auto;
-        padding: 10px;
-        box-sizing: border-box;
-        background: #0003;
-        border-radius: 8px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
 
     /* 10×10 grid */
     .grid {
         display: grid;
         grid-template-columns: repeat(10, 1fr);
-        gap: 10px;
-        justify-items: center;
+        grid-template-rows: repeat(10, 1fr);
+        width: 100%;
+        height: 100%;
+        gap: 6px;
     }
 
+    /* Auto-scaling images */
     .grid img {
-        height: 90px;          /* All images same height */
-        width: auto;           /* Width adjusts proportionally */
+        width: 100%;
+        height: 100%;
         object-fit: contain;   /* No cropping */
+        background: #222;
         border-radius: 4px;
         cursor: pointer;
-        background: #222;
         padding: 4px;
+        box-sizing: border-box;
     }
 </style>
 
@@ -66,16 +70,13 @@ fetch(apiURL)
     .then(response => response.json())
     .then(items => {
 
-        // Allowed image types
         const allowed = [".jpg", ".jpeg", ".png", ".bmp"];
 
-        // Filter only images
         const images = items.filter(file => {
             const name = file.name.toLowerCase();
             return allowed.some(ext => name.endsWith(ext));
         });
 
-        // Sort alphabetically for deterministic order
         images.sort((a, b) => a.name.localeCompare(b.name));
 
         const grid = document.getElementById("picGrid");
