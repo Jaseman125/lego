@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>LEGO Colouring Book</title>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #111;
+        color: #eee;
+        margin: 0;
+        overflow: hidden;
+    }
+
+    #ls-header {
+        position: absolute;
+        background-color: rgba(0,0,0,0.6);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+        font-size: 20px;
+        height: 40px;
+        width: 100%;
+        top: 0;
+        left: 0;
+        z-index: 10;
+    }
+
+    .ls-arrow {
+        cursor: pointer;
+        user-select: none;
+        font-size: 28px;
+        font-weight: bold;
+        line-height: 40px;
+    }
+
+    #ls-content {
+        position: absolute;
+        top: 40px;
+        left: 0;
+        width: 100%;
+        height: calc(100% - 40px);
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding-top: 20px;
+    }
+
+    .slide-wrapper {
+        width: 100%;
+        text-align: center;
+    }
+
+    .slide-title {
+        font-size: 32px;
+        font-weight: bold;
+        margin-bottom: 20px;
+        color: #6cf;
+    }
+
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(8, 180px);
+        gap: 20px;
+        justify-content: center;
+    }
+
+    .item img {
+        width: 180px;
+        height: auto;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+</style>
+
+</head>
+<body>
+
+<div id="ls-header">
+    <div id="ls-left" class="ls-arrow">&#9664;</div>
+    <div id="ls-counter">0</div>
+    <div id="ls-right" class="ls-arrow">&#9654;</div>
+</div>
+
+<div id="ls-content"></div>
+
+<script>
+let pages = [];
+let currentPage = 0;
+
+function updateContent() {
+    document.getElementById("ls-content").innerHTML = pages[currentPage];
+    document.getElementById("ls-counter").innerText = currentPage + 1;
+}
+
+function nextPage() {
+    if (currentPage < pages.length - 1) {
+        currentPage++;
+        updateContent();
+    }
+}
+
+function prevPage() {
+    if (currentPage > 0) {
+        currentPage--;
+        updateContent();
+    }
+}
+
+document.getElementById("ls-left").addEventListener("click", prevPage);
+document.getElementById("ls-right").addEventListener("click", nextPage);
+
+const apiURL = "https://api.github.com/repos/Jaseman125/lego/contents/colouring-book";
+
+fetch(apiURL)
+    .then(response => response.json())
+    .then(items => {
+
+        const images = items.filter(f =>
+            f.name.toLowerCase().endsWith(".png") ||
+            f.name.toLowerCase().endsWith(".jpg") ||
+            f.name.toLowerCase().endsWith(".jpeg")
+        );
+
+        const chunkSize = 24;
+        for (let i = 0; i < images.length; i += chunkSize) {
+            const chunk = images.slice(i, i + chunkSize);
+
+            let html = `
+            <div class="slide-wrapper">
+                <div class="slide-title">LEGO Colouring Book</div>
+                <div class="grid">
+            `;
+
+            chunk.forEach(img => {
+                html += `
+                <div class="item">
+                    <img src="${img.download_url}" onclick="window.open('${img.download_url}', '_blank')">
+                </div>`;
+            });
+
+            html += `
+                </div>
+            </div>
+            `;
+
+            pages.push(html);
+        }
+
+        updateContent();
+    })
+    .catch(err => {
+        pages = ["<p>Error loading images from GitHub.</p>"];
+        updateContent();
+        console.error(err);
+    });
+
+</script>
+
+</body>
+</html>
