@@ -62,6 +62,7 @@
         color: #6cf;
     }
 
+    /* 8 columns × 5 rows */
     .grid {
         display: grid;
         grid-template-columns: repeat(8, 180px);
@@ -126,7 +127,7 @@ fetch(apiURL)
             f.name.toLowerCase().endsWith(".jpeg")
         );
 
-        const chunkSize = 24;
+        const chunkSize = 40; // 8 columns × 5 rows
         for (let i = 0; i < images.length; i += chunkSize) {
             const chunk = images.slice(i, i + chunkSize);
 
